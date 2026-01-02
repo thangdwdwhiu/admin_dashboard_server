@@ -1,18 +1,21 @@
 
+import { findUserByID } from "../repositories/auth.repo.js";
 import { verifyAccessToken } from "../utils/jwt.util.js"
+import createError from "../utils/createError.util.js"
 
-const authMiddleware =  (req, res, next) => {
+const authMiddleware = async  (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({
-        success: false,
-        message: "Chưa đăng nhập",
-      });
+        throw createError(401, "Chưa đăng nhập")
     }
     const accessToken = authHeader.split(" ")[1];
-    const payload = verifyAccessToken(accessToken);
-    req.user = payload;
+    const payload = verifyAccessToken(accessToken)
+    const user = await findUserByID(payload.id)
+    if (user.is_deleted || user.status === "BLOCKED"){
+      throw createError(401, "Tài khoản bị khóa ")
+    }
+    req.user = payload
     next();
   } catch (err) {
     next(err);

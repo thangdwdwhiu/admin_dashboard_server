@@ -9,7 +9,7 @@ const urlClient = process.env.URL_CLIENT || "http://localhost:5173"
 const configCors = {
   origin: urlClient,
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE","PATCH","OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   port: port
 }

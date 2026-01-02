@@ -10,5 +10,5 @@ const authRoute = express.Router()
 authRoute.post("/login", loginValidator,handleValidator,authController.login)
 authRoute.get("/me", authController.checkAuth)
 authRoute.post("/refresh", authController.refresh)
-
+authRoute.delete("/logout", authController.logout)
 export default authRoute

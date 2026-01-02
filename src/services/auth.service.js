@@ -8,6 +8,8 @@ const login = async (email, password) => {
     if (!user){
         throw createError(401, "không tìm thấy tài khoản")
     }
+    if (user.is_deleted || user.status !== "ACTIVE")
+        throw createError(401, "Tài khoản đã bị khóa")
     const isMatch = await bcrypt.compare(password, user.password)
 
     if (isMatch) {
