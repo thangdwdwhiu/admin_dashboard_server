@@ -100,7 +100,9 @@ class UserService {
   async updateProfile(fields, id) {
     const updated = await userRepo.updateProfile(fields, id)
     if (!updated) throw createError(404, "Không tìm thấy profile")
-    return updated
+    const newProfile = await userRepo.getProfile(id)
+    
+    return newProfile
   }
 }
 
