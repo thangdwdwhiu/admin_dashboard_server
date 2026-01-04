@@ -1,8 +1,10 @@
-import {getDashboardStats  as getDashboardStatsRepo} from "../repositories/report.repo.js"
+import reportRepo from "../repositories/report.repo.js"
 
-const getDashboardStats = async(req, res, next) =>{
+class reportController{
+
+    getDashboardStats = async(req, res, next) =>{
     try {
-        const [totalRes, statusRes, roleRes] = await getDashboardStatsRepo()
+        const [totalRes, statusRes, roleRes] = await reportRepo.getDashboardStats()
         // XU LY DU LIEU THO ======================================
         const totalUsers = parseInt(totalRes.rows[0].count)
         const statusMap = statusRes.rows.reduce((acc, curr) => {
@@ -31,4 +33,5 @@ const getDashboardStats = async(req, res, next) =>{
         next(err)
     }
 }
-export {getDashboardStats}
+}
+export default new reportController

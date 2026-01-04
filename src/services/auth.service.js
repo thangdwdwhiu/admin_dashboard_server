@@ -1,22 +1,38 @@
-import { findUserByEmail } from "../repositories/auth.repo.js"
+import authRepo from "../repositories/auth.repo.js"
 import createError from "../utils/createError.util.js"
 import bcrypt from "bcrypt"
 
-//LOGIN ============================================================
-const login = async (email, password) => {
-    const user = await findUserByEmail(email)
-    if (!user){
-        throw createError(401, "không tìm thấy tài khoản")
-    }
-    if (user.is_deleted || user.status !== "ACTIVE")
-        throw createError(401, "Tài khoản đã bị khóa")
-    const isMatch = await bcrypt.compare(password, user.password)
+class AuthService {
+  /* ================= LOGIN ================= */
+  async login(email, password) {
+    const user = await authRepo.findUserByEmail(email)
 
-    if (isMatch) {
-        const {password, ...userWithoutPassword} = user
-        return userWithoutPassword
+    if (!user) {
+      throw createError(401, "Không tìm thấy tài khoản")
     }
-    throw createError(401, "Sai mật khẩu")
+
+    if (user.is_deleted) {
+      throw createError(404, "Tài khoản không tồn tại")
+    }
+
+    if (user.status === "INACTIVE") {
+      throw createError(403, "Tài khoản này chưa được kích hoạt")
+    }
+
+    if (user.status === "BLOCKED") {
+      throw createError(401, "Tài khoản đã bị khóa")
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password)
+    if (!isMatch) {
+      throw createError(401, "Sai mật khẩu")
+    }
+
+    // remove password
+    const { password: _p, ...userWithoutPassword } = user
+    return userWithoutPassword
+  }
 }
 
-export {login}
+/* export singleton */
+export default new AuthService()

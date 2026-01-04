@@ -1,6 +1,6 @@
 import db from "../config/db.js"
-
-const getDashboardStats = async () =>{
+class repositories {
+   getDashboardStats = async () =>{
     const stats = await Promise.all([
         db.query("SELECT COUNT(*) as count FROM users WHERE is_deleted = false"),
         db.query("SELECT status, COUNT(*) as count FROM users WHERE is_deleted = false GROUP BY status"),
@@ -10,5 +10,6 @@ const getDashboardStats = async () =>{
     
     
 }
+}
 
-export {getDashboardStats}
+export default new repositories
