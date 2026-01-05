@@ -3,6 +3,7 @@ import authRepo from "../repositories/auth.repo.js";
 import { verifyAccessToken } from "../utils/jwt.util.js"
 import createError from "../utils/createError.util.js"
 
+
 const authMiddleware = async  (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -18,6 +19,12 @@ const authMiddleware = async  (req, res, next) => {
       throw createError(401, "Tài khoản không tồn tại")
     if (user.status === "BLOCKED")
       throw createError(401, "Tài khoản bị khóa ")
+
+    // kiểm tra xem thiết bị có còn hoạt động không
+    const isDeviceActive = await authRepo.isDeviceActive(user.id, payload.device_id)
+    if (!isDeviceActive) {
+      throw createError(401, "Thiết bị đã bị đăng xuát","SESSION_REVOKED")
+    }
     req.user = payload
     next();
   } catch (err) {

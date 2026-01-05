@@ -16,7 +16,7 @@ const catchError = (app) => {
     res.status(status).json({
       success: false,
       error,
-      errorCode: err.code || null
+      code: err.code || null
     })
   })
 }

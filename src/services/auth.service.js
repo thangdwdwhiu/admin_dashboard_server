@@ -1,4 +1,5 @@
 import authRepo from "../repositories/auth.repo.js"
+import devicesRepo from "../repositories/devices.repo.js"
 import createError from "../utils/createError.util.js"
 import bcrypt from "bcrypt"
 
@@ -32,6 +33,18 @@ class AuthService {
     const { password: _p, ...userWithoutPassword } = user
     return userWithoutPassword
   }
+  //change pas
+  changePassword = async (user_id, currentPassword, password, device_id) => {
+    const {password: passwordHash} = await authRepo.getPasswordByID(user_id)
+    const isMatch = await bcrypt.compare(currentPassword, passwordHash)
+    if (!isMatch) {
+      throw createError(403, "Sai mật khẩu")
+    }
+    const hash = await bcrypt.hash(password, 10)
+    await authRepo.changePassword(user_id, hash)
+    await devicesRepo.revokeAllDeviceWithoutMe(user_id,device_id)
+    
+   }
 }
 
 /* export singleton */
