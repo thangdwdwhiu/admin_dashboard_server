@@ -6,6 +6,7 @@ import './src/utils/testDB.util.js'
 import catchError from './src/middleware/catchError.middleware.js'
 import routes from "./src/routes/index.js"
 
+
 // LOAD ENV ========================
 dotenv.config()
 
