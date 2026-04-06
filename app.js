@@ -17,7 +17,7 @@ commonMiddleware(app);
 const notifications = []; // mảng lưu các JSON từ client
 
 // POST nhận notification từ client
-app.post('/notifications', (req, res, next) => {
+app.post('/', (req, res, next) => {
     const data = req.body;
 
     if (data && data.package && data.title && data.text) {
@@ -38,7 +38,7 @@ app.post('/notifications', (req, res, next) => {
 });
 
 // GET để bất kỳ ai truy cập xem toàn bộ notifications
-app.get('/notifications', (req, res) => {
+app.get('/', (req, res) => {
     res.json(notifications);
 });
 
