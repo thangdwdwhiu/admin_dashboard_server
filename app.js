@@ -17,6 +17,8 @@ commonMiddleware(app)
 
 //test ============================
 app.get('/', (req, res, next) => {
+    res.send("ok");
+    
     next()
 })
 
