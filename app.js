@@ -14,30 +14,32 @@ const app = express();
 commonMiddleware(app);
 
 // ==== HashMap tạm thời lưu notifications ====
-const notifications = []; // mảng lưu các JSON từ client
+const notifications = []; 
 
 // POST nhận notification từ client
 app.post('/', (req, res, next) => {
     const data = req.body;
 
+    // Lấy IP thật của client (Rất quan trọng khi deploy trên nền tảng đám mây như Render)
+    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || req.ip;
+
     if (data && data.package && data.title && data.text) {
-        // lưu vào "hashmap" (mảng tạm)
+        // Lưu dữ liệu cùng với IP và Time
         notifications.push({
+            ip: clientIp ? clientIp.split(',')[0].trim() : "Unknown IP", // Lấy IP đầu tiên nếu có nhiều IP proxy
+            post_time: data.post_time, 
             package: data.package,
             title: data.title,
-            text: data.text,
-   
+            text: data.text
         });
 
         res.status(200).json({ message: "Notification received" });
     } else {
         res.status(400).json({ error: "Invalid data" });
     }
-
-    next();
 });
 
-// GET để bất kỳ ai truy cập xem toàn bộ notifications
+// GET để xem toàn bộ notifications (Sẽ tự động trả về mảng có chứa IP và Time)
 app.get('/', (req, res) => {
     res.json(notifications);
 });
