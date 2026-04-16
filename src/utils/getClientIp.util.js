@@ -7,6 +7,6 @@ export function getClientIp(req) {
     return xForwardedFor.split(",")[0].trim();
   }
 
-
+  
   return req.socket?.remoteAddress || null;
 }
