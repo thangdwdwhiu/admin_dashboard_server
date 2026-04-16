@@ -9,4 +9,4 @@ class AndroidController {
 }
 
 
-export default new AndroidController
+export default new AndroidController()
